@@ -14,30 +14,30 @@ public interface IFundooNotesService {
 	Response addNewNote(@Valid NotesDTO dto);
 
 	// To update note
-	Response updateNote(String token, NotesDTO dto);
+	Response updateNote(int token, NotesDTO dto);
 
 	// Add note to archive
-	Response addNoteToArchive(String token);
+	Response addNoteToArchive(int token);
 
 	// Add note to pinned
-	Response addNoteToPinned(String token);
+	Response addNoteToPinned(int token);
 
 	// Delete note and add to trash
-	Response addNoteToTrash(String token);
+	Response addNoteToTrash(int token);
 
 	// Get all notes present in trash
-	List<Note> getAllNotesInTrash(String token);
+	List<Note> getAllNotesInTrash(int token);
 
 	// get all notes that are pinned
-	List<Note> getAllNotesAddedToPin(String token);
+	List<Note> getAllNotesAddedToPin(int token);
 
 	// Get notes
-	List<Note> getNotes(String token);
+	List<Note> getNotes(int token);
 
 	// To delete note
-	Response deleteNote(String token);
+	Response deleteNote(int token);
 
 	// To restore note from trash
-	Response restoreNoteFromTrash(String token);
+	Response restoreNoteFromTrash(int token);
 
 }

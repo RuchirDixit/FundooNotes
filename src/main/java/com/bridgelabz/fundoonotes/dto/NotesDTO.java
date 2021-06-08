@@ -12,7 +12,7 @@ public @Data class NotesDTO {
 	@NotBlank(message = "Description cannot be blank")
 	private String description;
 	
-	private long userId;
+	private int userId;
 	
 	@NotBlank(message = "Email id cannot be blank")
 	private String emailId;

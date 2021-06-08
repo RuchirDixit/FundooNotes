@@ -26,7 +26,7 @@ public @Data class Note {
 	private String description;
 	
 	@Column(name="userid")
-	private long userId;
+	private int userId;
 	
 	@Column(name = "registered_date")
 	private LocalDateTime registerDate  = LocalDateTime.now();

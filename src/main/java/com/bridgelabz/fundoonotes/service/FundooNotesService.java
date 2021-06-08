@@ -17,7 +17,7 @@ import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.repository.FundooNotesRepository;
 import com.bridgelabz.fundoonotes.util.Response;
 import com.bridgelabz.fundoonotes.util.TokenUtil;
-import com.bridgelabz.fundoonotes.exception.UserRegisterException;
+import com.bridgelabz.fundoonotes.exception.NotesException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +39,7 @@ public class FundooNotesService implements IFundooNotesService{
 		Optional<Note> isNotePresent = fundooNotesRepository.findByEmailId(dto.getEmailId());
 		if(isNotePresent.isPresent()) {
 			log.error("Not exists already.");
-			throw new UserRegisterException(400,"User already exists");
+			throw new NotesException(400,"User already exists");
 		}
 		else {
 			Note note = mapper.map(dto, Note.class);
@@ -51,172 +51,231 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response updateNote(String token, NotesDTO dto) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			isNotePresent.get().setTitle(dto.getTitle());
-			isNotePresent.get().setDescription(dto.getDescription());
-			isNotePresent.get().setColor(dto.getColor());
-			isNotePresent.get().setEmailId(dto.getEmailId());
-			isNotePresent.get().setRemindertime(dto.getRemindertime());
-			isNotePresent.get().setUserId(dto.getUserId());
-			isNotePresent.get().setUpdateDate(LocalDateTime.now());
-			fundooNotesRepository.save(isNotePresent.get());
-			log.debug("Note updated");
-			return new Response(200, "Note updated SuccessFully", null);
-		}
-		else {
-			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
-		}
-	}
-
-	@Override
-	public Response addNoteToArchive(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			if(isNotePresent.get().isArchived() == false) {
-				isNotePresent.get().setArchived(true);
+	public Response updateNote(int userId, NotesDTO dto) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(userId != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(userId);
+			if(isNotePresent.isPresent()) {
+				isNotePresent.get().setTitle(dto.getTitle());
+				isNotePresent.get().setDescription(dto.getDescription());
+				isNotePresent.get().setColor(dto.getColor());
+				isNotePresent.get().setEmailId(dto.getEmailId());
+				isNotePresent.get().setRemindertime(dto.getRemindertime());
+				isNotePresent.get().setUserId(dto.getUserId());
+				isNotePresent.get().setUpdateDate(LocalDateTime.now());
 				fundooNotesRepository.save(isNotePresent.get());
-				log.debug("Note Archived!");
-				return new Response(200, "Note archived", null);
+				log.debug("Note updated");
+				return new Response(200, "Note updated SuccessFully", null);
 			}
 			else {
-				log.debug("Note already Archived!");
-				return new Response(400, "Note already archived", null);
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
 			}
 		}
 		else {
 			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
+			throw new NotesException(404, "Note not found");
 		}
 	}
 
 	@Override
-	public Response addNoteToPinned(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			if(isNotePresent.get().isPinned() == false) {
-				isNotePresent.get().setPinned(true);
-				fundooNotesRepository.save(isNotePresent.get());
-				log.debug("Note Pinned!");
-				return new Response(200, "Note Pinned", null);
+	public Response addNoteToArchive(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				if(isNotePresent.get().isArchived() == false) {
+					isNotePresent.get().setArchived(true);
+					fundooNotesRepository.save(isNotePresent.get());
+					log.debug("Note Archived!");
+					return new Response(200, "Note archived", null);
+				}
+				else {
+					log.debug("Note already Archived!");
+					isNotePresent.get().setArchived(false);
+					fundooNotesRepository.save(isNotePresent.get());
+					return new Response(400, "Note unarchived", null);
+				}
 			}
 			else {
-				log.debug("Note already Pinned!");
-				return new Response(400, "Note already Pinned", null);
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
 			}
-		}
+		}	
 		else {
 			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
+			throw new NotesException(404, "Note not found");
 		}
 	}
 
 	@Override
-	public Response addNoteToTrash(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			if(isNotePresent.get().isTrashed() == false) {
-				isNotePresent.get().setTrashed(true);
-				fundooNotesRepository.save(isNotePresent.get());
-				log.debug("Note added to trash!");
-				return new Response(200, "Note added to trash", null);
+	public Response addNoteToPinned(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				if(isNotePresent.get().isPinned() == false) {
+					isNotePresent.get().setPinned(true);
+					fundooNotesRepository.save(isNotePresent.get());
+					log.debug("Note Pinned!");
+					return new Response(200, "Note Pinned", null);
+				}
+				else {
+					log.debug("Note already Pinned!");
+					isNotePresent.get().setPinned(false);
+					fundooNotesRepository.save(isNotePresent.get());
+					return new Response(400, "Note unPinned", null);
+				}
 			}
 			else {
-				log.debug("Note already added to trash!");
-				return new Response(400, "Note already added to trash", null);
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
 			}
-		}
+		}	
 		else {
 			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
+			throw new NotesException(404, "Note not found");
 		}
 	}
 
 	@Override
-	public List<Note> getAllNotesInTrash(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			List<Note> notes = fundooNotesRepository.findAll();
-			return notes.stream().filter(note -> note.isArchived()==true).collect(Collectors.toList());
-		}
-		else {
-			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
-		}
-	}
-
-	@Override
-	public List<Note> getAllNotesAddedToPin(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			List<Note> notes = fundooNotesRepository.findAll();
-			return notes.stream().filter(note -> note.isPinned()==true).collect(Collectors.toList());
-		}
-		else {
-			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
-		}
-	}
-
-	@Override
-	public List<Note> getNotes(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			List<Note> notes = fundooNotesRepository.findAll();
-			return notes.stream().filter(note -> note.isPinned()==false && note.isArchived() == false && note.isTrashed()==false).collect(Collectors.toList());
-		}
-		else {
-			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
-		}
-	}
-
-	@Override
-	public Response deleteNote(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			if(isNotePresent.get().isTrashed() == false) {
-				return addNoteToTrash(token);
+	public Response addNoteToTrash(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				if(isNotePresent.get().isTrashed() == false) {
+					isNotePresent.get().setTrashed(true);
+					fundooNotesRepository.save(isNotePresent.get());
+					log.debug("Note added to trash!");
+					return new Response(200, "Note added to trash", null);
+				}
+				else {
+					log.debug("Note already added to trash!");
+					return new Response(400, "Note already added to trash", null);
+				}
 			}
 			else {
-				fundooNotesRepository.delete(isNotePresent.get());
-				log.debug("Note deleted forever");
-				return new Response(200, "Note permanently deleted", null);
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
 			}
 		}
 		else {
 			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
+			throw new NotesException(404, "Note not found");
 		}
 	}
 
 	@Override
-	public Response restoreNoteFromTrash(String token) {
-		Long id = tokenUtil.decodeToken(token);
-		Optional<Note> isNotePresent =  fundooNotesRepository.findById(id);
-		if(isNotePresent.isPresent()) {
-			if(isNotePresent.get().isTrashed() == true) {
-				isNotePresent.get().setTrashed(false);
-				fundooNotesRepository.save(isNotePresent.get());
-				return new Response(200, "Note Removed from trash", null);
+	public List<Note> getAllNotesInTrash(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				List<Note> notes = fundooNotesRepository.findAll();
+				return notes.stream().filter(note -> note.isArchived()==true).collect(Collectors.toList());
 			}
-			else {			
-				return new Response(400, "Note not in trash", null);
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
 			}
 		}
 		else {
 			log.error("Note not Found");
-			throw new UserRegisterException(404, "Note not found");
+			throw new NotesException(404, "Note not found");
+		}	
+	}
+
+	@Override
+	public List<Note> getAllNotesAddedToPin(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				List<Note> notes = fundooNotesRepository.findAll();
+				return notes.stream().filter(note -> note.isPinned()==true).collect(Collectors.toList());
+			}
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
+			}
+		}
+		else {
+			log.error("Note not Found");
+			throw new NotesException(404, "Note not found");
+		}
+	}
+
+	@Override
+	public List<Note> getNotes(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				List<Note> notes = fundooNotesRepository.findAll();
+				return notes.stream().filter(note -> note.isPinned()==false && note.isArchived() == false && note.isTrashed()==false).collect(Collectors.toList());
+			}
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
+			}
+		}
+		else {
+			log.error("Note not Found");
+			throw new NotesException(404, "Note not found");
+		}
+		
+	}
+
+	@Override
+	public Response deleteNote(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				if(isNotePresent.get().isTrashed() == false) {
+					return addNoteToTrash(token);
+				}
+				else {
+					fundooNotesRepository.delete(isNotePresent.get());
+					log.debug("Note deleted forever");
+					return new Response(200, "Note permanently deleted", null);
+				}
+			}
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
+			}
+		}
+		else {
+			log.error("Note not Found");
+			throw new NotesException(404, "Note not found");
+		}
+	}
+
+	@Override
+	public Response restoreNoteFromTrash(int token) {
+		//Long id = tokenUtil.decodeToken(token);
+		if(token!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+			if(isNotePresent.isPresent()) {
+				if(isNotePresent.get().isTrashed() == true) {
+					isNotePresent.get().setTrashed(false);
+					fundooNotesRepository.save(isNotePresent.get());
+					return new Response(200, "Note Removed from trash", null);
+				}
+				else {			
+					return new Response(400, "Note not in trash", null);
+				}
+			}
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note not found");
+			}
+		}
+		else {
+			log.error("Note not Found");
+			throw new NotesException(404, "Note not found");
 		}
 	}
 }

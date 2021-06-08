@@ -9,4 +9,6 @@ import com.bridgelabz.fundoonotes.entity.Note;
 public interface FundooNotesRepository extends JpaRepository<Note, Long> {
 
 	Optional<Note> findByEmailId(String emailId);
+
+	Optional<Note> findByUserId(int userId);
 }

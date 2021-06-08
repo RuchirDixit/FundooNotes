@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 @ResponseStatus
 @Data
 @Slf4j
-public class UserRegisterException extends RuntimeException {
+public class NotesException extends RuntimeException {
 
-	public UserRegisterException(int statusCode, String statusmessage) {
+	public NotesException(int statusCode, String statusmessage) {
 		super(statusmessage);
 		StatusCode = statusCode;
 		Statusmessage = statusmessage;
