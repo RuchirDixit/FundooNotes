@@ -288,7 +288,7 @@ public class FundooNotesService implements IFundooNotesService{
 	/**
 	 * To add collaborator to notes
 	 * @param token: user id to verify, colabDto: ColabDTO
-	 * @return Reponse
+	 * @return Response
 	 */
 	@Override
 	public Response addCollaboratorToNotes(Long token, ColabDTO colabDto) {
@@ -299,7 +299,7 @@ public class FundooNotesService implements IFundooNotesService{
 				colabModel.setCollabEmail(colabDto.getCollabEmail());
 				colabModel.setNoteId(colabDto.getNoteId());
 				collabRepository.save(colabModel);
-				//isNotePresent.get().getCollaborator().add();
+				//isNotePresent.get().getCollaborator().add
 				isNotePresent.get().setUpdateDate(LocalDateTime.now());
 				fundooNotesRepository.save(isNotePresent.get());
 				log.info("User :" +colabDto.getCollabEmail() + " Added as collab.");

@@ -129,4 +129,39 @@ public class LabelService implements ILabelService{
 		}
 	}
 
+	@Override
+	public Response removeLabelFromNote(long token, long noteId, long labelId) {
+		if(token!=0) {
+			Optional<Label> islabelPresent = labelRepository.findById(labelId);
+			if(islabelPresent.isPresent()) {
+				Optional<Note> isNotePresent = notesRepository.findById(noteId);
+				if(isNotePresent.isPresent()) {
+					labelRepository.deleteByNoteAndLabelID(noteId, labelId);
+					if(islabelPresent.get().getNotes().size()!=0) {
+						islabelPresent.get().setNoteId(islabelPresent.get().getNotes().get(0).getId());
+					}
+					else {
+						islabelPresent.get().setNoteId(0L);
+					}
+					labelRepository.save(islabelPresent.get());					
+					isNotePresent.get().getLabellist().remove(islabelPresent.get());
+					notesRepository.save(isNotePresent.get());
+					return new Response(200, "Label removed from note", null);
+				}
+				else {
+					log.error("Note not present");
+					throw new NotesException(400,"Note not present.");
+				}
+			}
+			else {
+				log.error("Label not present");
+				throw new NotesException(400,"Label not present.");
+			}
+		}
+		else {
+			log.error("User not valid");
+			throw new NotesException(400,"User not Valid.");
+		}
+	}
+
 }

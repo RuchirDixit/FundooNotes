@@ -23,4 +23,7 @@ public interface ILabelService {
 	// Add specified label to note
 	Response addLabelToNote(long token, long noteId, long labelId);
 
+	// Remove label from note
+	Response removeLabelFromNote(long token, long noteId, long labelId);
+
 }

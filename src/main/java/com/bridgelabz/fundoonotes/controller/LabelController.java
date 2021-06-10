@@ -67,8 +67,15 @@ public class LabelController {
 	
 	@GetMapping("addLabelToNote/{token}")
 	public ResponseEntity<Response> addLabelToNote(@PathVariable long token,@RequestParam("noteId") long noteId, @RequestParam("labelId") long labelId){
-		log.debug("Delete label");
+		log.debug("Add label to note");
 		Response response = labelService.addLabelToNote(token,noteId,labelId);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+	
+	@GetMapping("removeLabelFromNote/{token}")
+	public ResponseEntity<Response> removeLabelFromNote(@PathVariable long token,@RequestParam("noteId") long noteId, @RequestParam("labelId") long labelId){
+		log.debug("Remove label to note");
+		Response response = labelService.removeLabelFromNote(token,noteId,labelId);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 	
