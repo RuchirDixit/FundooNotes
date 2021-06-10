@@ -1,13 +1,22 @@
 package com.bridgelabz.fundoonotes.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Entity
@@ -26,7 +35,7 @@ public @Data class Note {
 	private String description;
 	
 	@Column(name="userid")
-	private int userId;
+	private long userId;
 	
 	@Column(name = "registered_date")
 	private LocalDateTime registerDate  = LocalDateTime.now();
@@ -45,12 +54,20 @@ public @Data class Note {
 	
 	@Column(name="email_id")
 	private String emailId;
-	
+
 	@Column(name="color")
 	private String color;
 	
 	@Column(name="reminder")
 	private LocalDateTime remindertime;
+
+	@JsonIgnore()
+	@ManyToMany(cascade = CascadeType.ALL)
+	private List<Label> labellist;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	private List<Note> collaborator;
+
 
 
 }

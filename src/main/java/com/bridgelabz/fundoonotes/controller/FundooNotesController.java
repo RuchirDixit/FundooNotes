@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.service.IFundooNotesService;
@@ -33,6 +35,13 @@ public class FundooNotesController {
 	public ResponseEntity<Response> addNewNote(@Valid @RequestBody NotesDTO dto){
 		log.debug("Add notes");
 		Response notesEntity = fundoNotesService.addNewNote(dto);
+		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);
+	}
+	
+	@PostMapping("/addColabToNote/{token}")
+	public ResponseEntity<Response> addCollabToNote(@PathVariable Long token,@RequestBody ColabDTO colabDto){
+		log.debug("Add Colab to notes");
+		Response notesEntity = fundoNotesService.addCollaboratorToNotes(token,colabDto);
 		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);
 	}
 	

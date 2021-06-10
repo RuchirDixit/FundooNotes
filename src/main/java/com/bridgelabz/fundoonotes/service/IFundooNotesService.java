@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.util.Response;
@@ -14,30 +15,33 @@ public interface IFundooNotesService {
 	Response addNewNote(@Valid NotesDTO dto);
 
 	// To update note
-	Response updateNote(int token, NotesDTO dto);
+	Response updateNote(long token, NotesDTO dto);
 
 	// Add note to archive
-	Response addNoteToArchive(int token);
+	Response addNoteToArchive(long token);
 
 	// Add note to pinned
-	Response addNoteToPinned(int token);
+	Response addNoteToPinned(long token);
 
 	// Delete note and add to trash
-	Response addNoteToTrash(int token);
+	Response addNoteToTrash(long token);
 
 	// Get all notes present in trash
-	List<Note> getAllNotesInTrash(int token);
+	List<Note> getAllNotesInTrash(long token);
 
 	// get all notes that are pinned
-	List<Note> getAllNotesAddedToPin(int token);
+	List<Note> getAllNotesAddedToPin(long token);
 
 	// Get notes
-	List<Note> getNotes(int token);
+	List<Note> getNotes(long token);
 
 	// To delete note
-	Response deleteNote(int token);
+	Response deleteNote(long token);
 
 	// To restore note from trash
-	Response restoreNoteFromTrash(int token);
+	Response restoreNoteFromTrash(long token);
+
+	// To add collaborator to notes
+	Response addCollaboratorToNotes(Long token, ColabDTO colabDto);
 
 }

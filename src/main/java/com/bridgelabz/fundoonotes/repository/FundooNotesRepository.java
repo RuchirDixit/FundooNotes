@@ -10,5 +10,5 @@ public interface FundooNotesRepository extends JpaRepository<Note, Long> {
 
 	Optional<Note> findByEmailId(String emailId);
 
-	Optional<Note> findByUserId(int userId);
+	Optional<Note> findByUserId(long userId);
 }

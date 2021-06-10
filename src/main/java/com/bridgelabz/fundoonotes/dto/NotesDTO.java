@@ -1,7 +1,13 @@
 package com.bridgelabz.fundoonotes.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
+
+import com.bridgelabz.fundoonotes.entity.Label;
+import com.bridgelabz.fundoonotes.entity.Note;
+
 import lombok.Data;
 
 public @Data class NotesDTO {
@@ -12,7 +18,7 @@ public @Data class NotesDTO {
 	@NotBlank(message = "Description cannot be blank")
 	private String description;
 	
-	private int userId;
+	private long userId;
 	
 	@NotBlank(message = "Email id cannot be blank")
 	private String emailId;

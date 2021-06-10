@@ -12,8 +12,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
+import com.bridgelabz.fundoonotes.entity.Collaborator;
 import com.bridgelabz.fundoonotes.entity.Note;
+import com.bridgelabz.fundoonotes.repository.CollaboratorRepository;
 import com.bridgelabz.fundoonotes.repository.FundooNotesRepository;
 import com.bridgelabz.fundoonotes.util.Response;
 import com.bridgelabz.fundoonotes.util.TokenUtil;
@@ -27,6 +30,9 @@ public class FundooNotesService implements IFundooNotesService{
 
 	@Autowired
 	FundooNotesRepository fundooNotesRepository;
+	
+	@Autowired
+	CollaboratorRepository collabRepository;
 	
 	@Autowired
 	ModelMapper mapper;
@@ -51,7 +57,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response updateNote(int userId, NotesDTO dto) {
+	public Response updateNote(long userId, NotesDTO dto) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(userId != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(userId);
@@ -79,7 +85,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToArchive(int token) {
+	public Response addNoteToArchive(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -109,7 +115,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToPinned(int token) {
+	public Response addNoteToPinned(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -139,7 +145,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToTrash(int token) {
+	public Response addNoteToTrash(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -167,7 +173,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getAllNotesInTrash(int token) {
+	public List<Note> getAllNotesInTrash(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -187,7 +193,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getAllNotesAddedToPin(int token) {
+	public List<Note> getAllNotesAddedToPin(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -207,7 +213,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getNotes(int token) {
+	public List<Note> getNotes(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token != 0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -228,7 +234,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response deleteNote(int token) {
+	public Response deleteNote(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token!=0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -254,7 +260,7 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response restoreNoteFromTrash(int token) {
+	public Response restoreNoteFromTrash(long token) {
 		//Long id = tokenUtil.decodeToken(token);
 		if(token!=0) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
@@ -271,6 +277,37 @@ public class FundooNotesService implements IFundooNotesService{
 			else {
 				log.error("Note not Found");
 				throw new NotesException(404, "Note not found");
+			}
+		}
+		else {
+			log.error("Note not Found");
+			throw new NotesException(404, "Note not found");
+		}
+	}
+
+	/**
+	 * To add collaborator to notes
+	 * @param token: user id to verify, colabDto: ColabDTO
+	 * @return Reponse
+	 */
+	@Override
+	public Response addCollaboratorToNotes(Long token, ColabDTO colabDto) {
+		if(token!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findById(colabDto.getNoteId());
+			if(isNotePresent.isPresent()) {
+				Collaborator colabModel = mapper.map(colabDto, Collaborator.class);
+				colabModel.setCollabEmail(colabDto.getCollabEmail());
+				colabModel.setNoteId(colabDto.getNoteId());
+				collabRepository.save(colabModel);
+				//isNotePresent.get().getCollaborator().add();
+				isNotePresent.get().setUpdateDate(LocalDateTime.now());
+				fundooNotesRepository.save(isNotePresent.get());
+				log.info("User :" +colabDto.getCollabEmail() + " Added as collab.");
+				return new Response(200, "Collaborator added!", null);
+			}
+			else {
+				log.error("Note not Found");
+				throw new NotesException(404, "Note with mentioned ID not found");
 			}
 		}
 		else {
