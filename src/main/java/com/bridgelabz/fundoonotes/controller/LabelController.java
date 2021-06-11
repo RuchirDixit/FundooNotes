@@ -72,7 +72,7 @@ public class LabelController {
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 	
-	@GetMapping("removeLabelFromNote/{token}")
+	@DeleteMapping("removeLabelFromNote/{token}")
 	public ResponseEntity<Response> removeLabelFromNote(@PathVariable long token,@RequestParam("noteId") long noteId, @RequestParam("labelId") long labelId){
 		log.debug("Remove label to note");
 		Response response = labelService.removeLabelFromNote(token,noteId,labelId);

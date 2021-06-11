@@ -20,5 +20,6 @@ public @Data class Collaborator {
 	@Column(name = "note_id")
 	private Long noteId;
 	
+	
 	private String collabEmail;
 }

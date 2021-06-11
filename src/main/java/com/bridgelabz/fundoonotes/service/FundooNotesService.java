@@ -299,9 +299,20 @@ public class FundooNotesService implements IFundooNotesService{
 				colabModel.setCollabEmail(colabDto.getCollabEmail());
 				colabModel.setNoteId(colabDto.getNoteId());
 				collabRepository.save(colabModel);
-				//isNotePresent.get().getCollaborator().add
+				isNotePresent.get().getCollaborator().add(isNotePresent.get());
 				isNotePresent.get().setUpdateDate(LocalDateTime.now());
 				fundooNotesRepository.save(isNotePresent.get());
+				NotesDTO notesDTO = new NotesDTO();
+				notesDTO.setColor(isNotePresent.get().getColor());
+				notesDTO.setDescription(isNotePresent.get().getDescription());
+				notesDTO.setUserId(isNotePresent.get().getUserId());
+				notesDTO.setEmailId(colabDto.getCollabEmail());
+				notesDTO.setRemindertime(isNotePresent.get().getRemindertime());
+				notesDTO.setTitle(isNotePresent.get().getTitle());
+				Note newNote = mapper.map(notesDTO, Note.class);
+				newNote.setRegisterDate(LocalDateTime.now());
+				newNote.setUpdateDate(LocalDateTime.now());
+				fundooNotesRepository.save(newNote);
 				log.info("User :" +colabDto.getCollabEmail() + " Added as collab.");
 				return new Response(200, "Collaborator added!", null);
 			}
@@ -313,6 +324,31 @@ public class FundooNotesService implements IFundooNotesService{
 		else {
 			log.error("Note not Found");
 			throw new NotesException(404, "Note not found");
+		}
+	}
+
+	@Override
+	public Response removeColabFromNote(long token, long noteId, String colabEmail) {
+		if(token!=0) {
+			collabRepository.deleteCollaborator(colabEmail);
+			log.info("Collaborator" + colabEmail + " deleted.");
+			return new Response(200, "Collaborator deleted!", null);
+		}
+		else {
+			log.error("User not Found");
+			throw new NotesException(404, "User not found");
+		}
+	}
+
+	@Override
+	public List<Collaborator> getCollaborators(int token) {
+		if(token!=0) {
+			List<Collaborator> collaborators = collabRepository.findAll();
+			return collaborators;
+		}
+		else {
+			log.error("User not Found");
+			throw new NotesException(404, "User not found");
 		}
 	}
 }

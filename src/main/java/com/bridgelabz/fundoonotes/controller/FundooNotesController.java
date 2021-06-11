@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
+import com.bridgelabz.fundoonotes.entity.Collaborator;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.service.IFundooNotesService;
 import com.bridgelabz.fundoonotes.util.Response;
@@ -38,12 +40,6 @@ public class FundooNotesController {
 		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);
 	}
 	
-	@PostMapping("/addColabToNote/{token}")
-	public ResponseEntity<Response> addCollabToNote(@PathVariable Long token,@RequestBody ColabDTO colabDto){
-		log.debug("Add Colab to notes");
-		Response notesEntity = fundoNotesService.addCollaboratorToNotes(token,colabDto);
-		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);
-	}
 	
 	@GetMapping("/archiveNote/{token}")
 	public ResponseEntity<Response> addNoteToArchive(@PathVariable int token){
@@ -98,5 +94,25 @@ public class FundooNotesController {
 	public ResponseEntity<Response> deleteNote(@PathVariable int token){
 		Response response = fundoNotesService.deleteNote(token);
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+	
+	@PostMapping("/addColabToNote/{token}")
+	public ResponseEntity<Response> addCollabToNote(@PathVariable Long token,@RequestBody ColabDTO colabDto){
+		log.debug("Add Colab to notes");
+		Response notesEntity = fundoNotesService.addCollaboratorToNotes(token,colabDto);
+		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);
+	}
+	
+	@DeleteMapping("removeColabFromNote/{token}")
+	public ResponseEntity<Response> removeColabFromNote(@PathVariable long token,@RequestParam("noteId") long noteId, @RequestParam("colabEmail") String colabEmail){
+		log.debug("Remove Colab from note");
+		Response response = fundoNotesService.removeColabFromNote(token,noteId,colabEmail);
+		return new ResponseEntity<Response>(response,HttpStatus.OK);
+	}
+	
+	@GetMapping("getCollaborators/{token}")
+	public ResponseEntity<List<?>> getCollaborators(@PathVariable int token){
+		List<Collaborator> response = fundoNotesService.getCollaborators(token);
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }

@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
+import com.bridgelabz.fundoonotes.entity.Collaborator;
 import com.bridgelabz.fundoonotes.entity.Note;
 import com.bridgelabz.fundoonotes.util.Response;
 
@@ -43,5 +44,11 @@ public interface IFundooNotesService {
 
 	// To add collaborator to notes
 	Response addCollaboratorToNotes(Long token, ColabDTO colabDto);
+
+	// To remove collaborator from notes
+	Response removeColabFromNote(long token, long noteId, String colabEmail);
+
+	// Get all colaborators
+	List<Collaborator> getCollaborators(int token);
 
 }
