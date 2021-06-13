@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -96,8 +97,8 @@ public class FundooNotesController {
 		return new ResponseEntity<Response>(response,HttpStatus.OK);
 	}
 	
-	@PostMapping("/addColabToNote/{token}")
-	public ResponseEntity<Response> addCollabToNote(@PathVariable Long token,@RequestBody ColabDTO colabDto){
+	@PostMapping("/addColabToNote")
+	public ResponseEntity<Response> addCollabToNote(@RequestHeader("token") String token,@RequestBody ColabDTO colabDto){
 		log.debug("Add Colab to notes");
 		Response notesEntity = fundoNotesService.addCollaboratorToNotes(token,colabDto);
 		return new ResponseEntity<Response>(notesEntity,HttpStatus.OK);

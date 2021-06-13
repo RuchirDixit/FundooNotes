@@ -3,15 +3,11 @@ package com.bridgelabz.fundoonotes.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
 import com.bridgelabz.fundoonotes.dto.ColabDTO;
 import com.bridgelabz.fundoonotes.dto.NotesDTO;
 import com.bridgelabz.fundoonotes.entity.Collaborator;
@@ -21,7 +17,6 @@ import com.bridgelabz.fundoonotes.repository.FundooNotesRepository;
 import com.bridgelabz.fundoonotes.util.Response;
 import com.bridgelabz.fundoonotes.util.TokenUtil;
 import com.bridgelabz.fundoonotes.exception.NotesException;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -33,6 +28,9 @@ public class FundooNotesService implements IFundooNotesService{
 	
 	@Autowired
 	CollaboratorRepository collabRepository;
+	
+	@Autowired
+	RestTemplate restTemplate;
 	
 	@Autowired
 	ModelMapper mapper;
@@ -291,30 +289,40 @@ public class FundooNotesService implements IFundooNotesService{
 	 * @return Response
 	 */
 	@Override
-	public Response addCollaboratorToNotes(Long token, ColabDTO colabDto) {
-		if(token!=0) {
+	public Response addCollaboratorToNotes(String token, ColabDTO colabDto) {
+		// To check in user table if user exists
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:8081/user/checkUser/"+token,Boolean.class);
+		if(isUserPresent) {
 			Optional<Note> isNotePresent =  fundooNotesRepository.findById(colabDto.getNoteId());
 			if(isNotePresent.isPresent()) {
-				Collaborator colabModel = mapper.map(colabDto, Collaborator.class);
-				colabModel.setCollabEmail(colabDto.getCollabEmail());
-				colabModel.setNoteId(colabDto.getNoteId());
-				collabRepository.save(colabModel);
-				isNotePresent.get().getCollaborator().add(isNotePresent.get());
-				isNotePresent.get().setUpdateDate(LocalDateTime.now());
-				fundooNotesRepository.save(isNotePresent.get());
-				NotesDTO notesDTO = new NotesDTO();
-				notesDTO.setColor(isNotePresent.get().getColor());
-				notesDTO.setDescription(isNotePresent.get().getDescription());
-				notesDTO.setUserId(isNotePresent.get().getUserId());
-				notesDTO.setEmailId(colabDto.getCollabEmail());
-				notesDTO.setRemindertime(isNotePresent.get().getRemindertime());
-				notesDTO.setTitle(isNotePresent.get().getTitle());
-				Note newNote = mapper.map(notesDTO, Note.class);
-				newNote.setRegisterDate(LocalDateTime.now());
-				newNote.setUpdateDate(LocalDateTime.now());
-				fundooNotesRepository.save(newNote);
-				log.info("User :" +colabDto.getCollabEmail() + " Added as collab.");
-				return new Response(200, "Collaborator added!", null);
+				// To check in user table if email id exists	
+				boolean isEmailPresent = restTemplate.getForObject("http://localhost:8081/user/checkEmailExists/"+token+"/"+colabDto.getCollabEmail(),Boolean.class);
+				if(isEmailPresent) {
+					Collaborator colabModel = mapper.map(colabDto, Collaborator.class);
+					colabModel.setCollabEmail(colabDto.getCollabEmail());
+					colabModel.setNoteId(colabDto.getNoteId());
+					collabRepository.save(colabModel);
+					isNotePresent.get().setUpdateDate(LocalDateTime.now());
+					fundooNotesRepository.save(isNotePresent.get());
+					NotesDTO notesDTO = new NotesDTO();
+					notesDTO.setColor(isNotePresent.get().getColor());
+					notesDTO.setDescription(isNotePresent.get().getDescription());
+					notesDTO.setUserId(isNotePresent.get().getUserId());
+					notesDTO.setEmailId(colabDto.getCollabEmail());
+					notesDTO.setRemindertime(isNotePresent.get().getRemindertime());
+					notesDTO.setTitle(isNotePresent.get().getTitle());
+					Note newNote = mapper.map(notesDTO, Note.class);
+					newNote.setRegisterDate(LocalDateTime.now());
+					newNote.setUpdateDate(LocalDateTime.now());
+					fundooNotesRepository.save(newNote);
+					log.info("User :" +colabDto.getCollabEmail() + " Added as collab.");
+					return new Response(200, "Collaborator added!", null);
+				}
+				else {
+					log.error("User with Email not Found");
+					throw new NotesException(404, "User with Email not found");
+				}
+				
 			}
 			else {
 				log.error("Note not Found");
@@ -322,8 +330,8 @@ public class FundooNotesService implements IFundooNotesService{
 			}
 		}
 		else {
-			log.error("Note not Found");
-			throw new NotesException(404, "Note not found");
+			log.error("User not Found");
+			throw new NotesException(404, "User not found");
 		}
 	}
 

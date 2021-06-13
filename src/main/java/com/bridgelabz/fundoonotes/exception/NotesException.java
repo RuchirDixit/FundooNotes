@@ -32,7 +32,7 @@ public class NotesException extends RuntimeException {
 	 * @return error response
 	 */
 	public Response getErrorResponse() {
-		log.error("Error msg:" + Statusmessage);
+		log.error("Error msg sttaus:" + getStatusmessage());
 		return getErrorResponse(Locale.getDefault());
 	}
 	
@@ -42,7 +42,7 @@ public class NotesException extends RuntimeException {
 	 * @return : Response type
 	 */
 	public Response getErrorResponse(Locale locale) {
-		log.error("Error msg:" + Statusmessage);
+		log.error("Error msg notes:" + getStatusmessage());
 		ErrorResponse err = new ErrorResponse(StatusCode, Statusmessage, getStackTrace());
 		err.setStatusCode(getStatusCode());
 		err.setStatusmessage(getStatusmessage());

@@ -43,7 +43,7 @@ public interface IFundooNotesService {
 	Response restoreNoteFromTrash(long token);
 
 	// To add collaborator to notes
-	Response addCollaboratorToNotes(Long token, ColabDTO colabDto);
+	Response addCollaboratorToNotes(String token, ColabDTO colabDto);
 
 	// To remove collaborator from notes
 	Response removeColabFromNote(long token, long noteId, String colabEmail);

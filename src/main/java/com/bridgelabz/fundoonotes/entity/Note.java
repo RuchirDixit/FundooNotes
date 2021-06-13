@@ -65,9 +65,6 @@ public @Data class Note {
 	@ManyToMany(cascade = CascadeType.ALL)
 	private List<Label> labellist;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	private List<Note> collaborator;
-
 
 
 }
