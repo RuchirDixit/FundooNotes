@@ -55,10 +55,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response updateNote(long userId, NotesDTO dto) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(userId != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(userId);
+	public Response updateNote(String token, NotesDTO dto) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				isNotePresent.get().setTitle(dto.getTitle());
 				isNotePresent.get().setDescription(dto.getDescription());
@@ -83,10 +83,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToArchive(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public Response addNoteToArchive(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				if(isNotePresent.get().isArchived() == false) {
 					isNotePresent.get().setArchived(true);
@@ -113,10 +113,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToPinned(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public Response addNoteToPinned(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				if(isNotePresent.get().isPinned() == false) {
 					isNotePresent.get().setPinned(true);
@@ -143,10 +143,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response addNoteToTrash(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public Response addNoteToTrash(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				if(isNotePresent.get().isTrashed() == false) {
 					isNotePresent.get().setTrashed(true);
@@ -171,10 +171,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getAllNotesInTrash(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public List<Note> getAllNotesInTrash(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				List<Note> notes = fundooNotesRepository.findAll();
 				return notes.stream().filter(note -> note.isArchived()==true).collect(Collectors.toList());
@@ -191,10 +191,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getAllNotesAddedToPin(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public List<Note> getAllNotesAddedToPin(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				List<Note> notes = fundooNotesRepository.findAll();
 				return notes.stream().filter(note -> note.isPinned()==true).collect(Collectors.toList());
@@ -211,10 +211,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public List<Note> getNotes(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token != 0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public List<Note> getNotes(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id != 0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				List<Note> notes = fundooNotesRepository.findAll();
 				return notes.stream().filter(note -> note.isPinned()==false && note.isArchived() == false && note.isTrashed()==false).collect(Collectors.toList());
@@ -232,10 +232,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response deleteNote(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token!=0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public Response deleteNote(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				if(isNotePresent.get().isTrashed() == false) {
 					return addNoteToTrash(token);
@@ -258,10 +258,10 @@ public class FundooNotesService implements IFundooNotesService{
 	}
 
 	@Override
-	public Response restoreNoteFromTrash(long token) {
-		//Long id = tokenUtil.decodeToken(token);
-		if(token!=0) {
-			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(token);
+	public Response restoreNoteFromTrash(String token) {
+		Long id = tokenUtil.decodeToken(token);
+		if(id!=0) {
+			Optional<Note> isNotePresent =  fundooNotesRepository.findByUserId(id);
 			if(isNotePresent.isPresent()) {
 				if(isNotePresent.get().isTrashed() == true) {
 					isNotePresent.get().setTrashed(false);
