@@ -7,6 +7,9 @@
     <li>Create a new note</li>
     <li>Delete a note</li>
     <li>Update a note</li>
+    <li>ArchiveNote a note</li>
+    <li>Pin/Unpin a note</li>
+    <li>Restore a deleted note</li>
     <li>Add collaborators to your note</li>
     <li>Add labels to your note</li>
   </ul>
@@ -24,5 +27,15 @@
   <ol>
     <li>Java</li>
     <li>SpringBoot</li>
+  </ol
+  <br><br>
+  <h4>To run the application locally, pleae follow these steps:</h4>
+  <ol>
+    <li>Please try to use Spring STS IDE for less configurations</li>
+    <li>Clone the repo locally and open in above IDE</li>
+    <li>Make changes according to your local Database and SMTP properties inside application.properties file at given path : <u>src/main/resources
+/application.properties
+</u></li>
+    <li>Run the application.</li>
   </ol>
 </h4>
